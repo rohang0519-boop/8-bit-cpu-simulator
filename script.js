@@ -61,7 +61,10 @@ function syncCPUFromWasm() {
     cpu.flags.of = wasmCall("cpu_get_flag", "number", ["number"], [3]);
 
     cpu.halted = wasmCall("cpu_is_halted") === 1;
+
+    cpu.instructionCount = wasmCall("cpu_get_instruction_count");
 }
+
 
 
 // ==========================================
@@ -91,7 +94,9 @@ let cpu = {
     activeInstruction: null,
 
     registerChanges: [],
-    memoryChanges: []
+    memoryChanges: [],
+
+    instructionCount: 0
 };
 
 
@@ -858,6 +863,15 @@ function updateDashboard() {
     if (irElement) irElement.textContent = cpu.ir;
     if (statusElement) statusElement.textContent = cpu.status;
 
+    // UPDATE INSTRUCTIONS EXECUTED COUNTER
+
+    const instructionCounter =
+        document.getElementById("stat-instructions");
+
+    if (instructionCounter) {
+        instructionCounter.textContent = cpu.instructionCount || 0;
+    }
+
     for (let i = 0; i < 4; i++) {
 
         const registerElement = document.getElementById("r" + i);
@@ -1081,8 +1095,6 @@ function loadProgram() {
     cpu.registerChanges = [];
     cpu.memoryChanges = [];
 
-    // Prepare instructions for the visual debugger.
-
     for (let line of lines) {
 
         line = line.split(";")[0].trim();
@@ -1120,8 +1132,6 @@ function loadProgram() {
     if (cpu.instructions.length === 0) {
         throw new Error("No instructions found.");
     }
-
-    // Load the complete source into the C++ engine.
 
     const success = wasmCall(
         "cpu_load_program",
@@ -1253,15 +1263,11 @@ async function executeInstruction(token = executionToken) {
             throw new Error(getWasmError());
         }
 
-        // Synchronize the JavaScript dashboard with C++ CPU.
-
         syncCPUFromWasm();
 
         cpu.ir = instruction;
 
         const nextPC = cpu.pc;
-
-        // Mark completion if the last instruction has executed.
 
         if (cpu.pc >= cpu.instructions.length) {
             cpu.halted = true;
@@ -1406,8 +1412,6 @@ async function runProgram() {
 
     try {
 
-        // Wait until WebAssembly has finished loading.
-
         await wasmReady;
 
         if (!wasmModule) {
@@ -1548,19 +1552,13 @@ async function stepProgram() {
 
 function resetCPU() {
 
-    // Cancel any ongoing asynchronous execution.
-
     executionToken++;
 
     isExecuting = false;
 
-    // Reset the actual C++ CPU engine.
-
     if (wasmModule) {
         wasmCall("cpu_reset");
     }
-
-    // Reset the JavaScript dashboard state.
 
     cpu = {
 
@@ -1587,7 +1585,9 @@ function resetCPU() {
         activeInstruction: null,
 
         registerChanges: [],
-        memoryChanges: []
+        memoryChanges: [],
+
+        instructionCount: 0
     };
 
     const log = document.getElementById("execution-log");
