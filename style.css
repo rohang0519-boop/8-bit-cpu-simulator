@@ -1171,3 +1171,600 @@ button:hover {
     }
 }
 
+
+/* =====================================================
+   COMPACT 3-COLUMN CPU SIMULATOR DASHBOARD
+   ===================================================== */
+
+.dashboard {
+    width: min(100% - 36px, 1600px);
+    max-width: 1600px;
+    margin: auto;
+    padding: 14px 0 24px;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+
+    grid-template-areas:
+        "welcome welcome welcome"
+        "info info info"
+        "registers registers flags"
+        "editor editor memory"
+        "editor editor speed"
+        "alu cycle cycle"
+        "bus control architecture"
+        "performance performance log";
+
+    gap: 12px;
+    align-items: stretch;
+}
+
+/* Allow workspace children to join dashboard grid */
+.workspace {
+    display: contents;
+}
+
+/* Header and welcome */
+.header {
+    height: 62px;
+    position: relative;
+}
+
+.dashboard > .welcome {
+    grid-area: welcome;
+    margin: 0;
+    padding: 0;
+}
+
+.welcome h1 {
+    font-size: 27px;
+    margin-bottom: 3px;
+}
+
+.welcome p {
+    font-size: 13px;
+}
+
+/* Top information cards */
+.dashboard > .info-grid {
+    grid-area: info;
+    margin: 0;
+    gap: 12px;
+}
+
+.info-grid .panel {
+    padding: 11px 16px;
+    margin: 0;
+}
+
+.info-grid h3 {
+    margin-bottom: 5px;
+    font-size: 12px;
+}
+
+.info-grid h2 {
+    font-size: 23px;
+}
+
+/* Position the main dashboard panels */
+.dashboard > section.panel:has(.register-grid) {
+    grid-area: registers;
+}
+
+.dashboard > section.panel:has(.flags) {
+    grid-area: flags;
+}
+
+.workspace > .editor {
+    grid-area: editor;
+}
+
+.workspace > .memory {
+    grid-area: memory;
+}
+
+.workspace > .speed-control {
+    grid-area: speed;
+}
+
+.dashboard > section.panel.alu-panel {
+    grid-area: alu;
+}
+
+.dashboard > section.panel:has(.cycle-container) {
+    grid-area: cycle;
+}
+
+.dashboard > section.panel.bus-panel {
+    grid-area: bus;
+}
+
+.dashboard > section.panel.control-unit-panel {
+    grid-area: control;
+}
+
+.dashboard > section.panel.architecture-panel {
+    grid-area: architecture;
+}
+
+.dashboard > section.panel.performance-panel {
+    grid-area: performance;
+}
+
+.dashboard > section.panel:has(#execution-log) {
+    grid-area: log;
+}
+
+/* Compact panel spacing */
+.dashboard > section.panel,
+.workspace > .panel {
+    margin: 0;
+    padding: 15px;
+    min-width: 0;
+}
+
+.dashboard .panel h2 {
+    font-size: 17px;
+    margin-bottom: 11px;
+}
+
+/* CPU Registers */
+.register-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.register {
+    padding: 12px 6px;
+}
+
+.register h2 {
+    font-size: 24px;
+    margin: 7px 0 0;
+}
+
+/* CPU Flags */
+.flags {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+}
+
+.flags div {
+    padding: 12px 8px;
+    text-align: center;
+}
+
+/* Assembly editor */
+.editor {
+    display: flex;
+    flex-direction: column;
+}
+
+.editor > h2 {
+    order: 1;
+}
+
+.editor > textarea {
+    order: 2;
+    height: 145px;
+    min-height: 125px;
+    resize: vertical;
+    padding: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.editor > .controls {
+    order: 3;
+    margin-top: 12px;
+    gap: 10px;
+}
+
+.editor > .instruction-panel {
+    order: 4;
+    margin-top: 12px;
+}
+
+.controls button {
+    flex: 1;
+    min-width: 0;
+    padding: 10px 15px;
+}
+
+/* Instruction viewer */
+#instruction-view {
+    max-height: 105px;
+    overflow-y: auto;
+}
+
+/* Memory */
+.workspace > .memory {
+    min-width: 0;
+}
+
+#memory-view {
+    min-height: 150px;
+    max-height: 205px;
+    overflow-y: auto;
+    padding: 10px;
+    gap: 6px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.memory-cell {
+    min-width: 0;
+    padding: 7px 4px;
+    font-size: 11px;
+}
+
+/* Execution speed */
+.workspace > .speed-control {
+    margin: 0;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #111a2e;
+    border: 1px solid #26334d;
+    border-radius: 12px;
+}
+
+.speed-control select {
+    padding: 8px 12px;
+}
+
+/* ALU */
+.alu-panel {
+    min-width: 0;
+}
+
+.alu-container {
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.alu-inputs {
+    width: 90px;
+    gap: 8px;
+}
+
+.alu-box {
+    padding: 10px 5px;
+}
+
+.alu-box h2 {
+    font-size: 22px;
+    margin-top: 5px;
+}
+
+.alu-core {
+    padding: 16px 10px;
+}
+
+.alu-core > h2 {
+    font-size: 20px;
+}
+
+.alu-result {
+    margin-top: 12px;
+    padding: 9px;
+}
+
+.alu-result h1 {
+    font-size: 27px;
+}
+
+.alu-info {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+/* Execution cycle */
+.cycle-container {
+    gap: 7px;
+    margin-top: 12px;
+}
+
+.cycle-stage {
+    padding: 13px 7px;
+}
+
+.cycle-stage h3 {
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.cycle-stage p {
+    font-size: 11px;
+    min-height: 35px;
+}
+
+.cycle-details {
+    margin-top: 12px;
+    padding: 11px;
+}
+
+/* Internal bus */
+.bus-panel,
+.control-unit-panel,
+.architecture-panel {
+    margin: 0;
+    min-width: 0;
+}
+
+.bus-description,
+.cu-description,
+.architecture-description {
+    font-size: 11px;
+    margin-bottom: 10px;
+}
+
+.bus-architecture {
+    padding: 10px 5px;
+    gap: 8px;
+}
+
+.bus-component,
+.internal-bus {
+    width: 100%;
+    max-width: 190px;
+    padding: 10px 5px;
+}
+
+.internal-bus {
+    max-width: 205px;
+}
+
+.bus-component h3,
+.internal-bus h3 {
+    font-size: 12px;
+}
+
+.bus-component p,
+.internal-bus p {
+    font-size: 11px;
+}
+
+.bus-destinations {
+    gap: 10px;
+}
+
+.bus-information {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.bus-signals {
+    gap: 6px;
+}
+
+.bus-signal {
+    padding: 8px 5px;
+}
+
+/* Control Unit */
+.cu-instruction {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.cu-instruction span {
+    font-size: 10px;
+}
+
+.cu-instruction strong {
+    font-size: 12px;
+}
+
+.control-signal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.control-signal {
+    padding: 9px 6px;
+    gap: 6px;
+}
+
+.control-signal span {
+    font-size: 10px;
+    overflow-wrap: anywhere;
+}
+
+.control-signal strong {
+    font-size: 9px;
+    padding: 4px 6px;
+}
+
+.cu-information {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+/* Architecture */
+.architecture-diagram {
+    gap: 7px;
+    padding: 10px 5px;
+}
+
+.architecture-row {
+    gap: 5px;
+}
+
+.architecture-component {
+    min-width: 0;
+    padding: 9px 5px;
+}
+
+.architecture-component strong {
+    font-size: 10px;
+}
+
+.architecture-component span {
+    font-size: 12px;
+}
+
+.architecture-component small {
+    font-size: 9px;
+}
+
+.architecture-bus {
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.architecture-bus span {
+    font-size: 9px;
+}
+
+.architecture-information {
+    margin-top: 10px;
+    padding: 10px;
+}
+
+/* Performance monitor */
+.performance-panel {
+    margin: 0;
+}
+
+.performance-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.performance-card {
+    padding: 10px 7px;
+    gap: 7px;
+}
+
+.performance-card span {
+    font-size: 10px;
+}
+
+.performance-card strong {
+    font-size: 19px;
+}
+
+/* Execution log */
+#execution-log {
+    max-height: 190px;
+    overflow-y: auto;
+    font-size: 12px;
+}
+
+/* =====================================================
+   TABLET
+   ===================================================== */
+
+@media (max-width: 1100px) {
+    .dashboard {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        grid-template-areas:
+            "welcome welcome"
+            "info info"
+            "registers registers"
+            "flags performance"
+            "editor editor"
+            "memory speed"
+            "alu cycle"
+            "bus bus"
+            "control control"
+            "architecture architecture"
+            "log log";
+    }
+
+    .bus-destinations {
+        gap: 35px;
+    }
+
+    .bus-component {
+        max-width: 230px;
+    }
+}
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 700px) {
+    .dashboard {
+        width: calc(100% - 24px);
+        padding-top: 12px;
+
+        grid-template-columns: minmax(0, 1fr);
+
+        grid-template-areas:
+            "welcome"
+            "info"
+            "registers"
+            "flags"
+            "editor"
+            "memory"
+            "speed"
+            "alu"
+            "cycle"
+            "bus"
+            "control"
+            "architecture"
+            "performance"
+            "log";
+
+        gap: 11px;
+    }
+
+    .dashboard > .info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .register-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .editor > textarea {
+        height: 160px;
+    }
+
+    .alu-container {
+        flex-direction: column;
+    }
+
+    .alu-inputs {
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .alu-core {
+        width: 100%;
+        max-width: none;
+    }
+
+    .cycle-container {
+        flex-direction: column;
+    }
+
+    .cycle-stage {
+        width: 100%;
+    }
+
+    .cycle-arrow {
+        transform: rotate(90deg);
+    }
+
+    .bus-destinations {
+        gap: 15px;
+    }
+
+    .bus-component {
+        max-width: 150px;
+    }
+
+    .internal-bus {
+        max-width: 180px;
+    }
+
+    .performance-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
