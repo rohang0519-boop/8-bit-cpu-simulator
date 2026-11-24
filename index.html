@@ -1,0 +1,546 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">CPU<span>SIM</span></div>
+        <div class="status">
+            <span class="status-dot"></span>
+            CPU READY
+        </div>
+    </header>
+
+    <main class="dashboard">
+
+        <section class="welcome">
+            <div>
+                <h1>CPU Simulator</h1>
+                <p>Interactive 8-bit CPU architecture and execution environment.</p>
+            </div>
+        </section>
+
+        <section class="info-grid">
+            <div class="panel">
+                <h3>Program Counter</h3>
+                <h2 id="pc">0</h2>
+            </div>
+
+            <div class="panel">
+                <h3>Instruction Register</h3>
+                <h2 id="ir">HLT</h2>
+            </div>
+
+            <div class="panel">
+                <h3>CPU Status</h3>
+                <h2 id="cpu-status">READY</h2>
+            </div>
+        </section>
+
+        <section class="panel">
+            <h2>CPU Registers</h2>
+
+            <div class="register-grid">
+
+                <div class="register">
+                    <span>R0</span>
+                    <h2 id="r0">0</h2>
+                    <small class="register-change" id="r0-change"></small>
+                </div>
+
+                <div class="register">
+                    <span>R1</span>
+                    <h2 id="r1">0</h2>
+                    <small class="register-change" id="r1-change"></small>
+                </div>
+
+                <div class="register">
+                    <span>R2</span>
+                    <h2 id="r2">0</h2>
+                    <small class="register-change" id="r2-change"></small>
+                </div>
+
+                <div class="register">
+                    <span>R3</span>
+                    <h2 id="r3">0</h2>
+                    <small class="register-change" id="r3-change"></small>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- CPU EXECUTION CYCLE -->
+        <section class="panel">
+            <h2>CPU Execution Cycle</h2>
+
+            <div class="cycle-container">
+
+                <div class="cycle-stage" id="fetch-stage">
+                    <div class="stage-number">01</div>
+                    <h3>FETCH</h3>
+                    <p>Fetch instruction from memory</p>
+                    <span class="stage-status">WAITING</span>
+                </div>
+
+                <div class="cycle-arrow">→</div>
+
+                <div class="cycle-stage" id="decode-stage">
+                    <div class="stage-number">02</div>
+                    <h3>DECODE</h3>
+                    <p>Understand the instruction</p>
+                    <span class="stage-status">WAITING</span>
+                </div>
+
+                <div class="cycle-arrow">→</div>
+
+                <div class="cycle-stage" id="execute-stage">
+                    <div class="stage-number">03</div>
+                    <h3>EXECUTE</h3>
+                    <p>Perform the operation</p>
+                    <span class="stage-status">WAITING</span>
+                </div>
+
+            </div>
+
+            <div class="cycle-details">
+                <h3>Current Execution Stage</h3>
+                <p id="cycle-message">Waiting for CPU execution...</p>
+            </div>
+
+        </section>
+
+
+<!-- ==================================
+     ALU VISUALIZATION
+================================== -->
+
+<section class="panel alu-panel">
+
+    <h2>Arithmetic Logic Unit (ALU)</h2>
+
+    <div class="alu-container">
+
+        <div class="alu-inputs">
+
+            <div class="alu-box">
+                <span>OPERAND A</span>
+                <h2 id="alu-a">0</h2>
+            </div>
+
+            <div class="alu-box">
+                <span>OPERAND B</span>
+                <h2 id="alu-b">0</h2>
+            </div>
+
+        </div>
+
+        <div class="alu-core">
+
+            <h2 id="alu-operation">IDLE</h2>
+
+            <p>ARITHMETIC LOGIC UNIT</p>
+
+            <div class="alu-result">
+                <span>RESULT</span>
+                <h1 id="alu-result">0</h1>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="alu-info">
+        <p id="alu-message">
+            Waiting for an ALU operation...
+        </p>
+    </div>
+
+</section>
+
+
+<!-- ==================================
+     CPU INTERNAL BUS VISUALIZATION
+================================== -->
+
+<section class="panel bus-panel">
+
+    <h2>CPU Internal Bus Architecture</h2>
+
+    <p class="bus-description">
+        Visualizing data transfer between CPU components
+    </p>
+
+    <div class="bus-architecture">
+
+        <!-- REGISTERS -->
+
+        <div class="bus-component" id="bus-registers">
+            <h3>CPU REGISTERS</h3>
+            <p>R0 | R1 | R2 | R3</p>
+            <span class="bus-status">IDLE</span>
+        </div>
+
+
+        <!-- CONNECTION -->
+
+        <div class="bus-connection" id="register-bus">
+            <span class="bus-line"></span>
+            <span class="bus-label">DATA BUS</span>
+            <span class="bus-line"></span>
+        </div>
+
+
+        <!-- INTERNAL BUS -->
+
+        <div class="internal-bus" id="internal-bus">
+
+            <h3>INTERNAL CPU BUS</h3>
+
+            <p id="bus-data">No data transfer</p>
+
+            <span class="bus-status">IDLE</span>
+
+        </div>
+
+
+        <!-- CONNECTIONS TO ALU AND MEMORY -->
+
+        <div class="bus-destinations">
+
+            <div class="bus-branch" id="alu-bus-connection">
+                <span class="bus-line"></span>
+                <span class="bus-label">DATA TRANSFER</span>
+                <div class="bus-component" id="bus-alu">
+                    <h3>ALU</h3>
+                    <p>Arithmetic & Logic</p>
+                    <span class="bus-status">IDLE</span>
+                </div>
+            </div>
+
+
+            <div class="bus-branch" id="memory-bus-connection">
+                <span class="bus-line"></span>
+                <span class="bus-label">DATA TRANSFER</span>
+                <div class="bus-component" id="bus-memory">
+                    <h3>RAM</h3>
+                    <p>256 Bytes</p>
+                    <span class="bus-status">IDLE</span>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BUS INFORMATION -->
+
+    <div class="bus-information">
+
+        <h3>Current Bus Activity</h3>
+
+        <p id="bus-message">
+            Waiting for data transfer...
+        </p>
+
+        <div class="bus-signals">
+
+            <div class="bus-signal">
+                <span>ADDRESS BUS</span>
+                <strong id="address-bus-value">---</strong>
+            </div>
+
+            <div class="bus-signal">
+                <span>DATA BUS</span>
+                <strong id="data-bus-value">---</strong>
+            </div>
+
+            <div class="bus-signal">
+                <span>CONTROL BUS</span>
+                <strong id="control-bus-value">IDLE</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==================================
+     CONTROL UNIT VISUALIZATION
+================================== -->
+
+<section class="panel control-unit-panel">
+
+    <h2>Control Unit (CU) Visualization</h2>
+
+    <p class="cu-description">
+        Control signals generated by the Control Unit during instruction execution
+    </p>
+
+    <div class="cu-instruction">
+        <span>DECODED INSTRUCTION</span>
+        <strong id="cu-instruction">WAITING</strong>
+    </div>
+
+    <div class="control-signal-grid">
+
+        <div class="control-signal" id="signal-reg-read">
+            <span>REG_READ</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-reg-write">
+            <span>REG_WRITE</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-alu">
+            <span>ALU_ENABLE</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-mem-read">
+            <span>MEM_READ</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-mem-write">
+            <span>MEM_WRITE</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-flag-write">
+            <span>FLAG_WRITE</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-pc-update">
+            <span>PC_UPDATE</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-branch">
+            <span>BRANCH</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+        <div class="control-signal" id="signal-halt">
+            <span>HALT</span>
+            <strong>INACTIVE</strong>
+        </div>
+
+    </div>
+
+    <div class="cu-information">
+        <h3>Control Unit Activity</h3>
+        <p id="cu-message">Waiting for an instruction to be decoded...</p>
+    </div>
+
+</section>
+
+
+<!-- ==================================
+     CPU ARCHITECTURE DIAGRAM
+================================== -->
+
+<section class="panel architecture-panel">
+
+    <h2>CPU Architecture Overview</h2>
+
+    <p class="architecture-description">
+        Visual representation of the internal architecture of our 8-bit CPU.
+    </p>
+
+    <div class="architecture-diagram">
+
+        <div class="architecture-row">
+            <div class="architecture-component" id="arch-pc">
+                <strong>PROGRAM COUNTER</strong>
+                <span>PC</span>
+                <small>Stores next instruction address</small>
+            </div>
+
+            <div class="architecture-arrow">→</div>
+
+            <div class="architecture-component" id="arch-ir">
+                <strong>INSTRUCTION REGISTER</strong>
+                <span>IR</span>
+                <small>Stores current instruction</small>
+            </div>
+        </div>
+
+        <div class="architecture-arrow vertical">↓</div>
+
+        <div class="architecture-component control-component" id="arch-cu">
+            <strong>CONTROL UNIT</strong>
+            <span>CU</span>
+            <small>Decodes instructions and generates control signals</small>
+        </div>
+
+        <div class="architecture-arrow vertical">↓</div>
+
+        <div class="architecture-row">
+
+            <div class="architecture-component" id="arch-registers">
+                <strong>REGISTER BANK</strong>
+                <span>R0 | R1 | R2 | R3</span>
+                <small>Stores temporary data</small>
+            </div>
+
+            <div class="architecture-arrow">↔</div>
+
+            <div class="architecture-component alu-component" id="arch-alu">
+                <strong>ARITHMETIC LOGIC UNIT</strong>
+                <span>ALU</span>
+                <small>Arithmetic and logical operations</small>
+            </div>
+
+        </div>
+
+        <div class="architecture-arrow vertical">↕</div>
+
+        <div class="architecture-component memory-component" id="arch-memory">
+            <strong>MAIN MEMORY</strong>
+            <span>RAM — 256 BYTES</span>
+            <small>Stores program data</small>
+        </div>
+
+        <div class="architecture-bus">
+            <span>DATA BUS</span>
+            <span>ADDRESS BUS</span>
+            <span>CONTROL BUS</span>
+        </div>
+
+    </div>
+
+    <div class="architecture-information">
+        <strong>Architecture Activity</strong>
+        <p id="architecture-message">
+            CPU architecture is waiting for execution.
+        </p>
+    </div>
+
+</section>
+
+
+        <section class="workspace">
+
+            <div class="panel editor">
+                <h2>Assembly Program</h2>
+
+                <textarea id="assembly-code" spellcheck="false">MOV R0, 10
+MOV R1, 20
+ADD R0, R1
+HLT</textarea>
+
+                <div class="instruction-panel">
+                    <h3>Program Instructions</h3>
+                    <div id="instruction-view">
+                        <p>Load a program to view instructions.</p>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button id="run-btn">Run</button>
+                    <button id="step-btn">Step</button>
+                    <button id="reset-btn">Reset</button>
+                </div>
+            </div>
+
+            <div class="speed-control">
+    <label for="execution-speed">Execution Speed</label>
+
+    <select id="execution-speed">
+        <option value="1000">Slow</option>
+        <option value="350" selected>Normal</option>
+        <option value="100">Fast</option>
+        <option value="0">Instant</option>
+    </select>
+</div>
+
+            <div class="panel memory">
+                <h2>Memory (RAM)</h2>
+                <div id="memory-view">
+                    <p>Memory will appear here.</p>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="panel">
+            <h2>CPU Flags</h2>
+
+            <div class="flags">
+                <div>ZF: <span id="zf">0</span></div>
+                <div>CF: <span id="cf">0</span></div>
+                <div>SF: <span id="sf">0</span></div>
+                <div>OF: <span id="of">0</span></div>
+            </div>
+        </section>
+
+
+<!-- CPU PERFORMANCE MONITOR -->
+
+<section class="panel performance-panel">
+
+    <h2>CPU Performance Monitor</h2>
+
+    <div class="performance-grid">
+
+        <div class="performance-card">
+            <span>Instructions Executed</span>
+            <strong id="stat-instructions">0</strong>
+        </div>
+
+        <div class="performance-card">
+            <span>Arithmetic Operations</span>
+            <strong id="stat-arithmetic">0</strong>
+        </div>
+
+        <div class="performance-card">
+            <span>Memory Operations</span>
+            <strong id="stat-memory">0</strong>
+        </div>
+
+        <div class="performance-card">
+            <span>Jump Operations</span>
+            <strong id="stat-jumps">0</strong>
+        </div>
+
+        <div class="performance-card">
+            <span>Execution Cycles</span>
+            <strong id="stat-cycles">0</strong>
+        </div>
+
+        <div class="performance-card">
+            <span>CPU Status</span>
+            <strong id="stat-status">READY</strong>
+        </div>
+
+    </div>
+
+</section>
+
+
+        <section class="panel">
+            <h2>Execution Log</h2>
+            <div id="execution-log">
+                <p>Waiting for program execution...</p>
+            </div>
+        </section>
+
+    </main>
+    <script src="cpu_engine.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
